@@ -1,0 +1,9 @@
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <com.letit0or1.dayscheduleview.DayScheduleView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+</AbsoluteLayout>
