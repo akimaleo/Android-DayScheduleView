@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DayScheduleView">
+
+        <attr name="separatorColor" format="color" />
+        <attr name="separatorHeight" format="dimension" />
+        <attr name="separatorMarginLeft" format="dimension" />
+        <attr name="separatorMarginRight" format="dimension" />
+
+        <attr name="android:textColor" />
+        <attr name="textSize" format="dimension" />
+
+        <attr name="hourFieldsHeight" format="dimension" />
+        <attr name="hourFieldsMinHeight" format="dimension" />
+        <attr name="hourFieldsMaxHeight" format="dimension" />
+        <attr name="hourMarginLeft" format="dimension" />
+
+    </declare-styleable>
+</resources>
