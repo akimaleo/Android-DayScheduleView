@@ -11,21 +11,20 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
+        int i = 10;
 
-        Time time0 = new Time(5, 5);
+        System.out.println(getTimeByPx(60) + "");
 
+        while (true) {
+            i += 10;
+            Thread.sleep(500);
+            System.out.println(getTimeByPx(i) + "");
+        }
+    }
 
-        Time time1 = new Time(5, 5);
-        time1.setHour(20);
-
-        Time time2 = new Time(5, 5);
-        time2.setHour(6);
-        time2.setMinute(70);
-
-        System.out.println(
-                time0.toString() + "\n" +
-                        time1.toString() + "\n" +
-                        time2.toString()
-        );
+    private float getTimeByPx(int px) {
+        float step = 60;
+        float pxMin = step / 60;
+        return px / pxMin;
     }
 }

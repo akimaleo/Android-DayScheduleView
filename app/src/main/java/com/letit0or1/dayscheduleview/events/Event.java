@@ -1,8 +1,7 @@
-package com.letit0or1.dayscheduleview;
+package com.letit0or1.dayscheduleview.events;
 
 
-import android.graphics.Rect;
-import android.graphics.RectF;
+import com.letit0or1.dayscheduleview.Time;
 
 /**
  * Created by akimaleo on 06.09.16.
@@ -12,8 +11,6 @@ public class Event implements Comparable<Event> {
     private Time timeFrom;
     private Time timeTo;
     private long duration;
-    private boolean isConfirmed = false;
-    private RectF rect;
 
     public Event(Time timeFrom, Time timeTo) {
         this.timeFrom = timeFrom;
@@ -53,22 +50,5 @@ public class Event implements Comparable<Event> {
         return duration;
     }
 
-    public void setConfirmed(boolean confirmed) {
-        isConfirmed = confirmed;
-    }
-
-    public boolean isConfirmed() {
-        return isConfirmed;
-    }
-
-
-    public void setRect(RectF rect) {
-        this.rect = rect;
-    }
-
-    public RectF getRect() {
-
-        return rect;
-    }
 
 }
