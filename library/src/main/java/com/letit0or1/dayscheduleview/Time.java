@@ -1,14 +1,5 @@
 package com.letit0or1.dayscheduleview;
 
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
-import java.util.Date;
-
-/**
- * Created by akimaleo on 06.09.16.
- */
-
 public class Time {
 
     private long timeMillis;
@@ -38,7 +29,7 @@ public class Time {
 
     public void setMinute(int minute) {
         minute = (minute * 60 * 1000) % (60 * (1000 * 60));
-        long difMins = timeMillis % (60 * 1000*60);
+        long difMins = timeMillis % (60 * 1000 * 60);
         timeMillis -= difMins;
         timeMillis += minute;
     }

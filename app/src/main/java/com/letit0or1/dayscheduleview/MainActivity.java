@@ -1,20 +1,24 @@
 package com.letit0or1.dayscheduleview;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.letit0or1.dayscheduleview.R;
 import com.letit0or1.dayscheduleview.events.DrawableEvent;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         DayScheduleView view = (DayScheduleView) findViewById(R.id.view);
         ArrayList<DrawableEvent> testE = new ArrayList<DrawableEvent>();
 

@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -16,6 +15,8 @@ import android.view.View;
 
 import com.letit0or1.dayscheduleview.events.DrawableEvent;
 import com.letit0or1.dayscheduleview.events.EventsController;
+import com.letit0or1.dayscheduleview.R;
+
 
 import java.util.ArrayList;
 
@@ -51,7 +52,7 @@ public class DayScheduleView extends View {
     };
 
     //Gesture detector
-    private GestureDetectorCompat mGestureDetector;
+    private GestureDetector mGestureDetector;
     private final GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
@@ -148,7 +149,7 @@ public class DayScheduleView extends View {
         hourMarginLeft = attributes.getDimension(R.styleable.DayScheduleView_hourMarginLeft, 40);
 
         //Guest detector
-        mGestureDetector = new GestureDetectorCompat(getContext(), mGestureListener);
+        mGestureDetector = new GestureDetector(getContext(), mGestureListener);
         mGestureScaleDetector = new ScaleGestureDetector(getContext(), mScaleListener);
 
         //EVENTS
