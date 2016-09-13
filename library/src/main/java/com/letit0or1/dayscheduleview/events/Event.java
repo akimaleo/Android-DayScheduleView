@@ -26,7 +26,7 @@ public class Event implements Comparable<Event> {
 
     @Override
     public String toString() {
-        return timeFrom.getTime() / 1000 / 60 / 60 + ":" + timeTo.getTime() / 1000 / 60;
+        return timeFrom.toString() + ":" + timeTo.toString();
     }
 
     @Override

@@ -15,8 +15,8 @@ public class DrawableEvent implements Comparable<DrawableEvent> {
 
     private Event event;
     private boolean isReady;
-    private int overlapCount;
-    private int overlapIndex;
+    private int overlapCount = 1;
+    private int overlapIndex = 1;
     private Float rectWidth;
     private RectF rect;
     private Paint textPaint;
@@ -101,5 +101,10 @@ public class DrawableEvent implements Comparable<DrawableEvent> {
         else if (this.event.getTimeFrom().getTime() < drawableEvent.getEvent().getTimeFrom().getTime())
             return -1;
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return overlapCount + " " + event.toString();
     }
 }

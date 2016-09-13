@@ -2,23 +2,25 @@ package com.letit0or1.dayscheduleview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import com.letit0or1.dayscheduleview.events.DrawableEvent;
+import com.letit0or1.dayscheduleview.events.EventUtil;
 import com.letit0or1.dayscheduleview.events.EventsController;
-import com.letit0or1.dayscheduleview.R;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class DayScheduleView extends View {
@@ -29,7 +31,7 @@ public class DayScheduleView extends View {
     private EventsController eventsController;
     private Paint paintSeparator, paintText, paintRectangle, paintTextRect;
     //private Color commonRectColor;
-    private float hourHeight, maxHourHeight, minHourHeight, separatorHeight, scroll, scale, hourMarginLeft, separatorMarginLeft, separatorPaddingRight;
+    private float hourSpacingHeight, maxHourHeight, minHourHeight, separatorHeight, scroll, scale, hourMarginLeft, separatorMarginLeft, separatorPaddingRight;
 
     //Zoom gesture detector
     private ScaleGestureDetector mGestureScaleDetector;
@@ -50,7 +52,6 @@ public class DayScheduleView extends View {
 
         }
     };
-
     //Gesture detector
     private GestureDetector mGestureDetector;
     private final GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
@@ -58,6 +59,8 @@ public class DayScheduleView extends View {
         public boolean onSingleTapUp(MotionEvent e) {
 
             float x = e.getX(), y = e.getY();
+            Log.e("Gesture detector", getDrawableEvent(x, y) != null ? getDrawableEvent(x, y).toString() : "null");
+            getDrawableEvent(x, y);
             return true;
         }
 
@@ -85,7 +88,12 @@ public class DayScheduleView extends View {
             }
             return false;
         }
+
+        public void onLongPress(MotionEvent e) {
+            Log.e("Gesture detector", "Long press detected");
+        }
     };
+
 
     //Constructors
     public DayScheduleView(Context context) {
@@ -95,7 +103,7 @@ public class DayScheduleView extends View {
         separatorHeight = 50f;
         maxHourHeight = 200;
         minHourHeight = 20;
-        hourHeight = (maxHourHeight + minHourHeight) / 2;
+        hourSpacingHeight = (maxHourHeight + minHourHeight) / 2;
 
         //Paint for separator
         paintSeparator = new Paint();
@@ -131,21 +139,18 @@ public class DayScheduleView extends View {
         paintSeparator = new Paint();
         paintSeparator.setColor(attributes.getColor(R.styleable.DayScheduleView_separatorColor, Color.GRAY));
         paintSeparator.setStrokeWidth(attributes.getDimension(R.styleable.DayScheduleView_separatorHeight, 2));
-        separatorPaddingRight = attributes.getDimension(R.styleable.DayScheduleView_separatorPaddingRight, 40);
-        separatorMarginLeft = attributes.getDimension(R.styleable.DayScheduleView_separatorPaddingLeft, 40);
-
+        separatorPaddingRight = attributes.getDimension(R.styleable.DayScheduleView_separatorPaddingRight, 10);
+        separatorMarginLeft = attributes.getDimension(R.styleable.DayScheduleView_separatorPaddingLeft, 10);
 
         //DIMENSION
-        minHourHeight = 20;
-        minHourHeight = attributes.getDimension(R.styleable.DayScheduleView_hourFieldsMinHeight, minHourHeight);
-        maxHourHeight = 200;
-        maxHourHeight = attributes.getDimension(R.styleable.DayScheduleView_hourFieldsMaxHeight, maxHourHeight);
-        hourHeight = attributes.getDimension(R.styleable.DayScheduleView_hourFieldsHeight, (minHourHeight + maxHourHeight) / 2);
+        minHourHeight = attributes.getDimension(R.styleable.DayScheduleView_hourFieldsMinHeight, 20);
+        maxHourHeight = attributes.getDimension(R.styleable.DayScheduleView_hourFieldsMaxHeight, 500);
+        hourSpacingHeight = attributes.getDimension(R.styleable.DayScheduleView_hourFieldsHeight, (minHourHeight + maxHourHeight) / 2);
 
         //TEXT
         paintText = new Paint();
-        paintText.setColor(attributes.getColor(R.styleable.DayScheduleView_android_textColor, Color.WHITE));
-        paintText.setTextSize(attributes.getDimension(R.styleable.DayScheduleView_textSize, hourHeight / 3));
+        paintText.setColor(attributes.getColor(R.styleable.DayScheduleView_timeTextColor, Color.GRAY));
+        paintText.setTextSize(attributes.getDimension(R.styleable.DayScheduleView_timeTextSize, 50));
         hourMarginLeft = attributes.getDimension(R.styleable.DayScheduleView_hourMarginLeft, 40);
 
         //Guest detector
@@ -155,16 +160,17 @@ public class DayScheduleView extends View {
         //EVENTS
         eventsController = new EventsController();
         paintRectangle = new Paint();
-        paintRectangle.setARGB(64, 0, 148, 228);
+        paintRectangle.setColor(attributes.getColor(R.styleable.DayScheduleView_eventTextColor, Color.argb(200, 150, 150, 150)));
         paintRectangle.setStyle(Paint.Style.FILL);
-        paintRectangle.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.SOLID));
+        paintRectangle.setShadowLayer(10.0f, 0.0f, 2.0f, Color.LTGRAY);
+        //paintRectangle.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.SOLID));
 
         //Paint for rect text
         paintTextRect = new Paint();
-        paintTextRect.setColor(Color.WHITE);
-        paintTextRect.setTextSize(24);
+        paintTextRect.setColor(attributes.getColor(R.styleable.DayScheduleView_eventTextColor, Color.argb(128, 240, 240, 240)));
+        paintTextRect.setTextSize(attributes.getDimension(R.styleable.DayScheduleView_eventTextColor, 30));
 
-        setBackgroundColor(Color.rgb(22, 46, 61));
+        setBackgroundColor(attributes.getColor(R.styleable.DayScheduleView_eventBackgroundColor, Color.rgb(244, 244, 244)));
         attributes.recycle();
     }
 
@@ -186,66 +192,80 @@ public class DayScheduleView extends View {
     }
 
     public float getDrawViewHeight() {
-        return 24 * (separatorHeight + hourHeight);
+        return 24 * (separatorHeight + hourSpacingHeight);
     }
 
     public void zoom(float scale) {
         setScroll(scroll * scale);
-        setHourHeight(scale * hourHeight);
+        setHourSpacingHeight(scale * hourSpacingHeight);
         if (getDrawViewHeight() <= getHeight()) {
             scroll = 0;
-            setHourHeight(getHeight() / 24 - separatorHeight);
+            setHourSpacingHeight(getHeight() / 24 - separatorHeight);
         } else if (getDrawViewEnd() < getHeight()) {
             scroll -= getDrawViewEnd() - getHeight();
         }
         invalidate();
     }
 
-    public void drawEvents(Canvas canvas) {
+    private float rectTimeTextLen() {
+        return paintText.measureText("00:00-00:00")-90;
+    }
 
-        float rectMargin = hourMarginLeft + paintText.getTextSize() * 2 + 20;
+    private float getRectMarginLeft() {
+        return paintText.measureText("00:00") + hourMarginLeft;
+    }
+
+    public void drawEvents(Canvas canvas) {
 
         calculateDrawType(eventsController.getEvents());
 
         for (DrawableEvent i : eventsController.getEvents()) {
             float
-                    rectWidth = (getWidth() - separatorPaddingRight - rectMargin) / (i.getOverlapIndex() + 1),
-                    spaceTop = paintText.getTextSize() + separatorHeight * 2;
+                    textLen = rectTimeTextLen(),
+                    marginLeftRect = getRectMarginLeft();
 
             i.setReady(true);
             i.setRect(
                     new RectF(
-                            rectMargin * (i.getOverlapIndex() + 1),
+                            marginLeftRect + textLen * (i.getOverlapIndex() - 1),
                             getPxByTime(i.getEvent().getTimeFrom()),
                             getWidth() - separatorPaddingRight,
                             getPxByTime(i.getEvent().getTimeTo())));
 
 
-            //DRAWING RECTANGLE TET
+            //DRAWING RECTANGLE TEXT
             canvas.drawRect(i.getRect(), i.getRectPaint() == null ? paintRectangle : i.getRectPaint());
             canvas.drawText(
                     i.getEvent().getTimeFrom() + "-" + i.getEvent().getTimeTo(),
-                    rectMargin * (i.getOverlapIndex() + 1),
+                    marginLeftRect + textLen * (i.getOverlapIndex() - 1),
                     getPxByTime(i.getEvent().getTimeFrom()) + paintTextRect.getTextSize(),
                     i.getTextPaint() == null ? paintTextRect : i.getTextPaint());
 
         }
     }
 
-    void calculateDrawType(ArrayList<DrawableEvent> events) {
+    void calculateDrawType(List<DrawableEvent> events) {
+        for (int i = 0; i < events.size(); i++)
+            events.get(i).setOverlapIndex(1);
+
         for (int i = 0; i < events.size(); i++) {
 
             int j = i + 1;
 
             if (j < events.size()) {
 
+
                 boolean isLabelsAreOverlapping = isOverlapTimeLabel(events.get(i), events.get(j));
 
                 if (isLabelsAreOverlapping) {
 
                     int iOverlapIndex = events.get(i).getOverlapIndex();
-                    events.get(j).setOverlapIndex(iOverlapIndex + 1);
 
+                    events.get(j).setOverlapIndex(++iOverlapIndex);
+
+                    for (int k = 1; k < iOverlapIndex; k++) {
+                        events.get(j - k).setOverlapCount(iOverlapIndex);
+                    }
                 }
             }
         }
@@ -290,7 +310,7 @@ public class DayScheduleView extends View {
     }
 
     private float getStep() {
-        return hourHeight + separatorHeight;
+        return hourSpacingHeight + separatorHeight;
     }
 
     private void drawSepAndHours(Canvas canvas) {
@@ -314,9 +334,9 @@ public class DayScheduleView extends View {
     public void setDrawHeight(float height) {
 
         float cut = height / 24 - (24 * separatorHeight);
-        setHourHeight(hourHeight - cut);
+        setHourSpacingHeight(hourSpacingHeight - cut);
 
-        cut = height / 24 - (24 * hourHeight);
+        cut = height / 24 - (24 * hourSpacingHeight);
         setSeparatorHeight(separatorHeight - cut);
     }
 
@@ -325,8 +345,8 @@ public class DayScheduleView extends View {
     }
 
     //Hours
-    public void setHourHeight(float height) {
-        hourHeight = Math.max(minHourHeight, Math.min(height, maxHourHeight));
+    public void setHourSpacingHeight(float height) {
+        hourSpacingHeight = Math.max(minHourHeight, Math.min(height, maxHourHeight));
     }
 
     public void setHourMarginLeft(float hourMarginLeft) {
@@ -346,7 +366,7 @@ public class DayScheduleView extends View {
         this.separatorMarginLeft = separatorMarginLeft;
     }
 
-    public void setEvents(ArrayList<DrawableEvent> events) {
+    public void setEvents(List<DrawableEvent> events) {
         eventsController.setEvents(events);
     }
 
@@ -356,5 +376,58 @@ public class DayScheduleView extends View {
 
     public float getRectangleTextSize() {
         return paintText.getTextSize();
+    }
+
+    public int touchIndex(float x, float y) {
+        int touchTypeIndex = 0;
+        float rectMargin = hourMarginLeft + paintText.getTextSize() * 2 + 20;
+        for (int i = 1; i < 6; i++)
+            if (x < rectMargin * i) {
+                touchTypeIndex = i - 1;
+                Log.i("touch index", touchTypeIndex + "");
+                break;
+            }
+        return touchTypeIndex;
+    }
+
+    private DrawableEvent getDrawableEvent(float x, float y) {
+
+        List<DrawableEvent> events = eventsController.getEvents();
+
+        //filter for overlapping events by Y
+        List<DrawableEvent> hoverEvents = new ArrayList<>();
+        for (DrawableEvent i : events) {
+            if (hoverClickByY(i, x, y)) {
+                hoverEvents.add(i);
+            }
+
+        }
+        int touchTypeIndex = touchIndex(x, y);
+
+        DrawableEvent returnable = null;
+        Log.i("Events count", hoverEvents.size() + "");
+
+        if (hoverEvents.size() == 1 && hoverEvents.get(0).getOverlapIndex() <= touchTypeIndex)
+            returnable = hoverEvents.get(0);
+
+        else if (hoverEvents.size() > 1) {
+
+            Collections.reverse(hoverEvents);
+            for (DrawableEvent i : hoverEvents) {
+                if (i.getOverlapIndex() <= touchTypeIndex) {
+                    returnable = i;
+                    break;
+                }
+            }
+        }
+        return returnable;
+    }
+
+    boolean hoverClickByY(DrawableEvent event, float x, float y) {
+        Time
+                start0 = event.getEvent().getTimeFrom(),
+                end0 = event.getEvent().getTimeTo();
+
+        return EventUtil.inRange(y, getPxByTime(start0), getPxByTime(end0));
     }
 }

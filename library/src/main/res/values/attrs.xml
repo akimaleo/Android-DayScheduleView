@@ -7,13 +7,17 @@
         <attr name="separatorPaddingLeft" format="dimension" />
         <attr name="separatorPaddingRight" format="dimension" />
 
-        <attr name="android:textColor" />
-        <attr name="textSize" format="dimension" />
+        <attr name="timeTextColor" format="color"/>
+        <attr name="timeTextSize" format="dimension" />
 
         <attr name="hourFieldsHeight" format="dimension" />
         <attr name="hourFieldsMinHeight" format="dimension" />
         <attr name="hourFieldsMaxHeight" format="dimension" />
         <attr name="hourMarginLeft" format="dimension" />
+
+        <attr name="eventTextColor" format="color" />
+        <attr name="eventTextSize" format="dimension" />
+        <attr name="eventBackgroundColor" format="color" />
 
     </declare-styleable>
 </resources>

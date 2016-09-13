@@ -48,7 +48,7 @@ public class EventUtil {
     }
 */
 
-    private static boolean inRange(float value, float min, float max) {
+    public static boolean inRange(float value, float min, float max) {
         return (value > min) && (value < max);
     }
 

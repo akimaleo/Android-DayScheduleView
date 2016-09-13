@@ -4,13 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <com.letit0or1.dayscheduleview.DayScheduleView
-            android:id="@+id/view"
+            android:id="@+id/dayScheduleView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:separatorHeight="1px"
-            app:separatorPaddingLeft="20px"
-            app:separatorPaddingRight="20px"
-            android:isScrollContainer="true"
-            android:layout_marginTop="1dp"/>
+            android:layout_height="match_parent"/>
 
 </RelativeLayout>

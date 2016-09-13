@@ -4,19 +4,20 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by akimaleo on 06.09.16.
  */
 public class EventsController {
-    private ArrayList<DrawableEvent> events;
+    private List<DrawableEvent> events;
 
-    public ArrayList<DrawableEvent> getEvents() {
+    public List<DrawableEvent> getEvents() {
         Collections.sort(events);
         return events;
     }
 
-    public void setEvents(ArrayList<DrawableEvent> events) {
+    public void setEvents(List<DrawableEvent> events) {
         Collections.sort(events);
 
         this.events = events;
