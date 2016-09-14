@@ -29,6 +29,7 @@ public class DayScheduleView extends View {
     private static String TAG = "DayScheduleView";
 
     private EventsController eventsController;
+
     private Paint paintSeparator, paintText, paintRectangle, paintTextRect;
     //private Color commonRectColor;
     private float hourSpacingHeight, maxHourHeight, minHourHeight, separatorHeight, scroll, scale, hourMarginLeft, separatorMarginLeft, separatorPaddingRight;
@@ -160,20 +161,20 @@ public class DayScheduleView extends View {
         //EVENTS
         eventsController = new EventsController();
         paintRectangle = new Paint();
-        paintRectangle.setColor(attributes.getColor(R.styleable.DayScheduleView_eventTextColor, Color.argb(200, 150, 150, 150)));
+        paintRectangle.setColor(attributes.getColor(R.styleable.DayScheduleView_eventBackgroundColor, Color.argb(200, 150, 150, 150)));
         paintRectangle.setStyle(Paint.Style.FILL);
-        paintRectangle.setShadowLayer(10.0f, 0.0f, 2.0f, Color.LTGRAY);
+        //paintRectangle.setShadowLayer(10.0f, 0.0f, 2.0f, Color.LTGRAY);
         //paintRectangle.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.SOLID));
 
         //Paint for rect text
         paintTextRect = new Paint();
         paintTextRect.setColor(attributes.getColor(R.styleable.DayScheduleView_eventTextColor, Color.argb(128, 240, 240, 240)));
-        paintTextRect.setTextSize(attributes.getDimension(R.styleable.DayScheduleView_eventTextColor, 30));
+        paintTextRect.setTextSize(attributes.getDimension(R.styleable.DayScheduleView_eventTextSize, 30));
 
-        setBackgroundColor(attributes.getColor(R.styleable.DayScheduleView_eventBackgroundColor, Color.rgb(244, 244, 244)));
+
+        //setBackgroundColor(attributes.getColor(R.styleable.Da, Color.rgb(244, 244, 244)));
         attributes.recycle();
     }
-
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent mEvent) {
@@ -208,7 +209,7 @@ public class DayScheduleView extends View {
     }
 
     private float rectTimeTextLen() {
-        return paintText.measureText("00:00-00:00")-90;
+        return paintText.measureText("00:00-00:00") - 90;
     }
 
     private float getRectMarginLeft() {
@@ -430,4 +431,23 @@ public class DayScheduleView extends View {
 
         return EventUtil.inRange(y, getPxByTime(start0), getPxByTime(end0));
     }
+
+    public void setPaintSeparator(Paint paintSeparator) {
+        this.paintSeparator = paintSeparator;
+    }
+
+    public Paint getPaintSeparator() {
+        return paintSeparator;
+    }
+
+    public Paint getPaintRectangle() {
+        return paintRectangle;
+    }
+
+    public void setPaintRectangle(Paint paintRectangle) {
+
+        this.paintRectangle = paintRectangle;
+    }
+
+
 }

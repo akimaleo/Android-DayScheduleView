@@ -6,6 +6,10 @@
         <com.letit0or1.dayscheduleview.DayScheduleView
             android:id="@+id/dayScheduleView"
             android:layout_width="match_parent"
+            app:separatorColor="#22d3ffc7"
+            android:background="#22bebebe"
+            app:eventTextColor="#000000"
+            app:eventBackgroundColor="#7966ff00"
             android:layout_height="match_parent"/>
 
 </RelativeLayout>

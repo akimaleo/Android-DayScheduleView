@@ -15,5 +15,7 @@
         <attr name="hourFieldsMaxHeight" format="dimension" />
         <attr name="hourMarginLeft" format="dimension" />
 
+        <attr name="android:background" />
+
     </declare-styleable>
 </resources>

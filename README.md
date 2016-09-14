@@ -35,26 +35,44 @@ Events will looks like:<br>
 
 ## Customising view
 ### XML attributes
-You can customize view by changing attributes in XML layout. Available attributes at this time:
+You can customize view by changing attributes in XML layout.
+ Available attributes at this time:
 
+```
 <attr name="separatorColor" format="color" />
-        <attr name="separatorHeight" format="dimension" />
-        <attr name="separatorPaddingLeft" format="dimension" />
-        <attr name="separatorPaddingRight" format="dimension" />
+<attr name="separatorColor" format="color" />
+<attr name="separatorHeight" format="dimension" />
+<attr name="separatorPaddingLeft" format="dimension" />
+<attr name="separatorPaddingRight" format="dimension" />
 
-        <attr name="timeTextColor" format="color"/>
-        <attr name="timeTextSize" format="dimension" />
+<attr name="timeTextColor" format="color"/>
+<attr name="timeTextSize" format="dimension" />
 
-        <attr name="hourFieldsHeight" format="dimension" />
-        <attr name="hourFieldsMinHeight" format="dimension" />
-        <attr name="hourFieldsMaxHeight" format="dimension" />
-        <attr name="hourMarginLeft" format="dimension" />
+<attr name="hourFieldsHeight" format="dimension" />
+<attr name="hourFieldsMinHeight" format="dimension" />
+<attr name="hourFieldsMaxHeight" format="dimension" />
+<attr name="hourMarginLeft" format="dimension" />
 
-        <attr name="eventTextColor" format="color" />
-        <attr name="eventTextSize" format="dimension" />
-        <attr name="eventBackgroundColor" format="color" />
-The result is:
-<img src="https://pp.vk.me/c637618/v637618952/d9c2/h2JmoixvVEw.jpg" width="256">
+<attr name="eventTextColor" format="color" />
+<attr name="eventTextSize" format="dimension" />
+<attr name="eventBackgroundColor" format="color" />
+```
+
+Sample:<br>
+
+```
+<com.letit0or1.dayscheduleview.DayScheduleView
+           android:id="@+id/dayScheduleView"
+           android:layout_width="match_parent"
+           app:separatorColor="#22d3ffc7"
+           android:background="#22bebebe"
+           app:eventTextColor="#000000"
+           app:eventBackgroundColor="#7966ff00"
+           android:layout_height="match_parent"/>
+           ```
+
+The result is:<br>
+![XML edit result](https://pp.vk.me/c637830/v637830952/bc87/KO7Lz6zC7iM.jpg)
 
 ### Programming change
 You can customize view by changing attributes in Java code:
