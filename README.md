@@ -77,7 +77,7 @@ Sample:<br>
 ```
 
 The result is:<br>
-![XML edit result](https://pp.vk.me/c637830/v637830952/bc87/KO7Lz6zC7iM.jpg)
+<img src="https://pp.vk.me/c637830/v637830952/bc87/KO7Lz6zC7iM.jpg" width="256">
 
 ### Programming change
 You can customize view by changing attributes in Java code:
