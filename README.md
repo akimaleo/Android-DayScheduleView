@@ -1,6 +1,10 @@
 # Description
 This View destinies for manipulating events during the day;
-
+##Features
+Add events.
+Vertical scroll.
+Zoom in/out.
+Customising view from XML or Java code.(See Customising view)
 # Usage
 ## XML view:
 ```<com.letit0or1.dayscheduleview.DayScheduleView
@@ -69,7 +73,8 @@ Sample:<br>
            app:eventTextColor="#000000"
            app:eventBackgroundColor="#7966ff00"
            android:layout_height="match_parent"/>
-           ```
+
+```
 
 The result is:<br>
 ![XML edit result](https://pp.vk.me/c637830/v637830952/bc87/KO7Lz6zC7iM.jpg)
