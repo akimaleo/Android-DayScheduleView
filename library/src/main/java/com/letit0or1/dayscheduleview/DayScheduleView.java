@@ -220,12 +220,11 @@ public class DayScheduleView extends View {
 
         calculateDrawType(eventsController.getEvents());
 
+        float
+                textLen = rectTimeTextLen(),
+                marginLeftRect = getRectMarginLeft();
         for (DrawableEvent i : eventsController.getEvents()) {
-            float
-                    textLen = rectTimeTextLen(),
-                    marginLeftRect = getRectMarginLeft();
 
-            i.setReady(true);
             i.setRect(
                     new RectF(
                             marginLeftRect + textLen * (i.getOverlapIndex() - 1),
@@ -254,7 +253,6 @@ public class DayScheduleView extends View {
             int j = i + 1;
 
             if (j < events.size()) {
-
 
                 boolean isLabelsAreOverlapping = isOverlapTimeLabel(events.get(i), events.get(j));
 
@@ -317,16 +315,21 @@ public class DayScheduleView extends View {
     private void drawSepAndHours(Canvas canvas) {
 
         for (int i = 0; i < 24; i++) {
+
+            float yPos = i * getStep() + scroll;
+            if (yPos > getDrawViewHeight())
+                break;
+
             canvas.drawLine(
                     separatorMarginLeft,
-                    i * getStep() + scroll,
+                    yPos,
                     canvas.getWidth() - separatorPaddingRight,
                     i * getStep() + scroll,
                     paintSeparator);
 
             canvas.drawText(i + ":00",
                     hourMarginLeft,
-                    i * getStep() + scroll + paintText.getTextSize(),
+                    yPos + paintText.getTextSize(),
                     paintText);
         }
 
