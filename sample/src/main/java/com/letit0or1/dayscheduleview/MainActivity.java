@@ -59,15 +59,14 @@ public class MainActivity extends Activity {
 
     void addTestEvents() {
         ArrayList<DrawableEvent> testE = new ArrayList<DrawableEvent>();
-
-
-        testE.add(new DrawableEvent(new Time(0, 0), new Time(1, 0)));
-        testE.add(new DrawableEvent(new Time(0, 1), new Time(1, 50)));
-        testE.add(new DrawableEvent(new Time(0, 20), new Time(2, 0)));
-
-        testE.add(new DrawableEvent(new Time(2, 30), new Time(4, 0)));
-        testE.add(new DrawableEvent(new Time(3, 30), new Time(7, 0)));
-        testE.add(new DrawableEvent(new Time(7, 10), new Time(8, 0)));
+//        testE.add(new DrawableEvent(new Time(0, 0), new Time(1, 0)));
+//        testE.add(new DrawableEvent(new Time(0, 1), new Time(1, 50)));
+//        testE.add(new DrawableEvent(new Time(0, 20), new Time(2, 0)));
+//        testE.add(new DrawableEvent(new Time(2, 30), new Time(4, 0)));
+//        testE.add(new DrawableEvent(new Time(3, 30), new Time(7, 0)));
+//        testE.add(new DrawableEvent(new Time(7, 10), new Time(8, 0)));
+        testE.add(new DrawableEvent(new Time(15, 10), new Time(18, 0)));
+        testE.add(new DrawableEvent(new Time(17, 10), new Time(20, 0)));
         view.setEvents(testE);
     }
 }

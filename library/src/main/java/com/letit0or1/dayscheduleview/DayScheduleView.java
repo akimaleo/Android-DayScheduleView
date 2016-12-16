@@ -15,6 +15,7 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 
 import com.letit0or1.dayscheduleview.events.DrawableEvent;
+import com.letit0or1.dayscheduleview.events.Event;
 import com.letit0or1.dayscheduleview.events.EventUtil;
 import com.letit0or1.dayscheduleview.events.EventsController;
 
@@ -228,15 +229,35 @@ public class DayScheduleView extends View {
 
     }
 
+    ArrayList<DrawableEvent> filterEventByTime(ArrayList<DrawableEvent> toFilter) {
+
+        ArrayList<DrawableEvent> filter = new ArrayList<>();
+
+        for (int i = 0; i < toFilter.size(); i++) {
+//            long q = toFilter.get(i).getEvent().getTimeFrom().getTime(), w = new Time(timeHourTo, 0).getTime();
+//            if (toFilter.get(i).getEvent().getTimeFrom().getTime() > new Time(timeHourTo, 0).getTime())
+//                continue;
+//            if (toFilter.get(i).getEvent().getTimeTo().getTime() < new Time(timeHourFrom, 0).getTime())
+//                continue;
+
+            if (
+                    !(toFilter.get(i).getEvent().getTimeFrom().getTime() > new Time(timeHourTo, 0).getTime()) &&
+                            !(toFilter.get(i).getEvent().getTimeTo().getTime() < new Time(timeHourFrom, 0).getTime()))
+                filter.add(toFilter.get(i));
+        }
+        return filter;
+    }
+
     public void drawEvents(Canvas canvas) {
 
         if (eventsController.getEvents() != null) {
-            calculateDrawType(eventsController.getEvents());
+            ArrayList<DrawableEvent> filtered = filterEventByTime((ArrayList<DrawableEvent>) eventsController.getEvents());
+            calculateDrawType(filtered);
 
             float
                     textLen = rectTimeTextWidth(),
                     marginLeftRect = getRectMarginLeft();
-            for (DrawableEvent i : eventsController.getEvents()) {
+            for (DrawableEvent i : filtered) {
 
                 i.setRect(
                         new RectF(
@@ -329,7 +350,7 @@ public class DayScheduleView extends View {
     //takes a own time class and returns height in pixels
     private float getPxByTime(Time time) {
         float minutesInPx = (getStep() / 60) * time.getMinute();
-        float hoursInPx = getStep() * time.getHour();
+        float hoursInPx = getStep() * (time.getHour() - timeHourFrom);
 
         return hoursInPx + minutesInPx + scroll;
     }
