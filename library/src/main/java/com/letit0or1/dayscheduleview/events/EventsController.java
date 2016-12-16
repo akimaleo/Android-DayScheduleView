@@ -12,14 +12,20 @@ import java.util.List;
 public class EventsController {
     private List<DrawableEvent> events;
 
+    public EventsController(List<DrawableEvent> events) {
+        if (events != null)
+            Collections.sort(events);
+        this.events = events;
+    }
+
     public List<DrawableEvent> getEvents() {
-        Collections.sort(events);
+        if (events != null)
+            Collections.sort(events);
         return events;
     }
 
     public void setEvents(List<DrawableEvent> events) {
         Collections.sort(events);
-
         this.events = events;
     }
 }

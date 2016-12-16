@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -30,9 +31,9 @@ public class DayScheduleView extends View {
 
     private EventsController eventsController;
 
-    private Paint paintSeparator, paintText, paintRectangle, paintTextRect;
-    //private Color commonRectColor;
-    private float hourSpacingHeight, maxHourHeight, minHourHeight, separatorHeight, scroll, scale, hourMarginLeft, separatorMarginLeft, separatorPaddingRight;
+    private Paint paintSeparator, paintTimeText, paintRectangle, paintTextRect;
+    private float hourSpacingHeight, maxHourHeight, minHourHeight, separatorHeight, scroll, hourMarginLeft, separatorMarginLeft, separatorPaddingRight, eventMarginLeft, eventMarginRight;
+    private int timeHourFrom, timeHourTo;
 
     //Zoom gesture detector
     private ScaleGestureDetector mGestureScaleDetector;
@@ -111,9 +112,9 @@ public class DayScheduleView extends View {
         paintSeparator.setColor(Color.GRAY);
 
         //Paint for hour text
-        paintText = new Paint();
-        paintText.setTextSize(minHourHeight);
-        paintText.setColor(Color.BLACK);
+        paintTimeText = new Paint();
+        paintTimeText.setTextSize(minHourHeight);
+        paintTimeText.setColor(Color.BLACK);
 
         //Paint for rect text
         paintTextRect = new Paint();
@@ -122,18 +123,23 @@ public class DayScheduleView extends View {
 
     public DayScheduleView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs);
+        init(attrs);
     }
 
     public DayScheduleView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
+        init(attrs);
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    private void init(AttributeSet attrs) {
+
 
         //ATTRIBUTES
         TypedArray attributes = getContext().obtainStyledAttributes(attrs, R.styleable.DayScheduleView);
+
+        //TIME HOUR FROM TO
+        timeHourFrom = attributes.getInt(R.styleable.DayScheduleView_timeHourFrom, 0);
+        timeHourTo = attributes.getInt(R.styleable.DayScheduleView_timeHourTo, 24);
 
         //SEPARATOR
         separatorHeight = attributes.getDimension(R.styleable.DayScheduleView_separatorHeight, 2);
@@ -149,9 +155,9 @@ public class DayScheduleView extends View {
         hourSpacingHeight = attributes.getDimension(R.styleable.DayScheduleView_hourFieldsHeight, (minHourHeight + maxHourHeight) / 2);
 
         //TEXT
-        paintText = new Paint();
-        paintText.setColor(attributes.getColor(R.styleable.DayScheduleView_timeTextColor, Color.GRAY));
-        paintText.setTextSize(attributes.getDimension(R.styleable.DayScheduleView_timeTextSize, 50));
+        paintTimeText = new Paint();
+        paintTimeText.setColor(attributes.getColor(R.styleable.DayScheduleView_timeTextColor, Color.GRAY));
+        paintTimeText.setTextSize(attributes.getDimension(R.styleable.DayScheduleView_timeTextSize, 50));
         hourMarginLeft = attributes.getDimension(R.styleable.DayScheduleView_hourMarginLeft, 40);
 
         //Guest detector
@@ -159,10 +165,12 @@ public class DayScheduleView extends View {
         mGestureScaleDetector = new ScaleGestureDetector(getContext(), mScaleListener);
 
         //EVENTS
-        eventsController = new EventsController();
+        eventsController = new EventsController(null);
         paintRectangle = new Paint();
         paintRectangle.setColor(attributes.getColor(R.styleable.DayScheduleView_eventBackgroundColor, Color.argb(200, 150, 150, 150)));
         paintRectangle.setStyle(Paint.Style.FILL);
+        eventMarginLeft = attributes.getDimension(R.styleable.DayScheduleView_evenMarginLeft, 150);
+        eventMarginRight = attributes.getDimension(R.styleable.DayScheduleView_evenMarginRight, 10);
         //paintRectangle.setShadowLayer(10.0f, 0.0f, 2.0f, Color.LTGRAY);
         //paintRectangle.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.SOLID));
 
@@ -170,7 +178,6 @@ public class DayScheduleView extends View {
         paintTextRect = new Paint();
         paintTextRect.setColor(attributes.getColor(R.styleable.DayScheduleView_eventTextColor, Color.argb(128, 240, 240, 240)));
         paintTextRect.setTextSize(attributes.getDimension(R.styleable.DayScheduleView_eventTextSize, 30));
-
 
         //setBackgroundColor(attributes.getColor(R.styleable.Da, Color.rgb(244, 244, 244)));
         attributes.recycle();
@@ -192,8 +199,67 @@ public class DayScheduleView extends View {
         drawEvents(canvas);
     }
 
+    private void drawSepAndHours(Canvas canvas) {
+
+        for (int i = timeHourFrom; i < timeHourTo; i++) {
+
+            int j = i - timeHourFrom;
+            float yPos = j * getStep() + scroll;
+            if (yPos > getDrawViewHeight())
+                break;
+
+            canvas.drawLine(
+                    separatorMarginLeft,
+                    yPos,
+                    canvas.getWidth() - separatorPaddingRight,
+                    j * getStep() + scroll,
+                    paintSeparator);
+
+            Rect bounds = new Rect();
+            paintTimeText.getTextBounds("00:00", 0, 1, bounds);
+
+            canvas.drawText(i + ":00",
+                    hourMarginLeft,
+                    yPos + paintTimeText.getTextSize() / 2 + hourSpacingHeight / 2,
+                    paintTimeText);
+
+//            Log.d(TAG, "text pos: " + j + " - " + (yPos + paintTimeText.getTextSize() / 2 + hourSpacingHeight / 2));
+        }
+
+    }
+
+    public void drawEvents(Canvas canvas) {
+
+        if (eventsController.getEvents() != null) {
+            calculateDrawType(eventsController.getEvents());
+
+            float
+                    textLen = rectTimeTextWidth(),
+                    marginLeftRect = getRectMarginLeft();
+            for (DrawableEvent i : eventsController.getEvents()) {
+
+                i.setRect(
+                        new RectF(
+                                marginLeftRect + textLen * (i.getOverlapIndex() - 1),
+                                getPxByTime(i.getEvent().getTimeFrom()),
+                                getWidth() - separatorPaddingRight - eventMarginRight,
+                                getPxByTime(i.getEvent().getTimeTo())));
+
+
+                //DRAWING RECTANGLE TEXT
+                canvas.drawRect(i.getRect(), i.getRectPaint() == null ? paintRectangle : i.getRectPaint());
+                canvas.drawText(
+                        i.getEvent().getTimeFrom() + "-" + i.getEvent().getTimeTo(),
+                        marginLeftRect + textLen * (i.getOverlapIndex() - 1),
+                        getPxByTime(i.getEvent().getTimeFrom()) + paintTextRect.getTextSize(),
+                        i.getTextPaint() == null ? paintTextRect : i.getTextPaint());
+
+            }
+        }
+    }
+
     public float getDrawViewHeight() {
-        return 24 * (separatorHeight + hourSpacingHeight);
+        return (timeHourTo - timeHourFrom) * (separatorHeight + hourSpacingHeight);
     }
 
     public void zoom(float scale) {
@@ -201,47 +267,23 @@ public class DayScheduleView extends View {
         setHourSpacingHeight(scale * hourSpacingHeight);
         if (getDrawViewHeight() <= getHeight()) {
             scroll = 0;
-            setHourSpacingHeight(getHeight() / 24 - separatorHeight);
+            setHourSpacingHeight(getHeight() / (timeHourTo - timeHourFrom) - separatorHeight);
         } else if (getDrawViewEnd() < getHeight()) {
             scroll -= getDrawViewEnd() - getHeight();
         }
         invalidate();
     }
 
-    private float rectTimeTextLen() {
-        return paintText.measureText("00:00-00:00") - 90;
+    private float rectTimeTextWidth() {
+        Rect bounds = new Rect();
+        paintTimeText.getTextBounds("00:00", 0, 5, bounds);
+//
+//        return bounds.width();
+        return paintTimeText.measureText("00:00-00:00") - ((int) paintTimeText.getTextSize() >> 1);
     }
 
     private float getRectMarginLeft() {
-        return paintText.measureText("00:00") + hourMarginLeft;
-    }
-
-    public void drawEvents(Canvas canvas) {
-
-        calculateDrawType(eventsController.getEvents());
-
-        float
-                textLen = rectTimeTextLen(),
-                marginLeftRect = getRectMarginLeft();
-        for (DrawableEvent i : eventsController.getEvents()) {
-
-            i.setRect(
-                    new RectF(
-                            marginLeftRect + textLen * (i.getOverlapIndex() - 1),
-                            getPxByTime(i.getEvent().getTimeFrom()),
-                            getWidth() - separatorPaddingRight,
-                            getPxByTime(i.getEvent().getTimeTo())));
-
-
-            //DRAWING RECTANGLE TEXT
-            canvas.drawRect(i.getRect(), i.getRectPaint() == null ? paintRectangle : i.getRectPaint());
-            canvas.drawText(
-                    i.getEvent().getTimeFrom() + "-" + i.getEvent().getTimeTo(),
-                    marginLeftRect + textLen * (i.getOverlapIndex() - 1),
-                    getPxByTime(i.getEvent().getTimeFrom()) + paintTextRect.getTextSize(),
-                    i.getTextPaint() == null ? paintTextRect : i.getTextPaint());
-
-        }
+        return paintTimeText.measureText("00:00") + hourMarginLeft + eventMarginLeft;
     }
 
     void calculateDrawType(List<DrawableEvent> events) {
@@ -312,35 +354,13 @@ public class DayScheduleView extends View {
         return hourSpacingHeight + separatorHeight;
     }
 
-    private void drawSepAndHours(Canvas canvas) {
-
-        for (int i = 0; i < 24; i++) {
-
-            float yPos = i * getStep() + scroll;
-            if (yPos > getDrawViewHeight())
-                break;
-
-            canvas.drawLine(
-                    separatorMarginLeft,
-                    yPos,
-                    canvas.getWidth() - separatorPaddingRight,
-                    i * getStep() + scroll,
-                    paintSeparator);
-
-            canvas.drawText(i + ":00",
-                    hourMarginLeft,
-                    yPos + paintText.getTextSize(),
-                    paintText);
-        }
-
-    }
 
     public void setDrawHeight(float height) {
 
-        float cut = height / 24 - (24 * separatorHeight);
+        float cut = height / (timeHourTo - timeHourFrom) - ((timeHourTo - timeHourFrom) * separatorHeight);
         setHourSpacingHeight(hourSpacingHeight - cut);
 
-        cut = height / 24 - (24 * hourSpacingHeight);
+        cut = height / (timeHourTo - timeHourFrom) - (((timeHourTo - timeHourFrom) * hourSpacingHeight));
         setSeparatorHeight(separatorHeight - cut);
     }
 
@@ -379,12 +399,12 @@ public class DayScheduleView extends View {
     }
 
     public float getRectangleTextSize() {
-        return paintText.getTextSize();
+        return paintTimeText.getTextSize();
     }
 
     public int touchIndex(float x, float y) {
         int touchTypeIndex = 0;
-        float rectMargin = hourMarginLeft + paintText.getTextSize() * 2 + 20;
+        float rectMargin = hourMarginLeft + paintTimeText.getTextSize() * 2 + 20;
         for (int i = 1; i < 6; i++)
             if (x < rectMargin * i) {
                 touchTypeIndex = i - 1;
@@ -452,5 +472,21 @@ public class DayScheduleView extends View {
         this.paintRectangle = paintRectangle;
     }
 
+    public void setTimeHourTo(int timeHourTo) {
+        this.timeHourTo = timeHourTo;
+        invalidate();
+    }
 
+    public void setTimeHourFrom(int timeHourFrom) {
+        this.timeHourFrom = timeHourFrom;
+        invalidate();
+    }
+
+    public int getTimeHourFrom() {
+        return timeHourFrom;
+    }
+
+    public int getTimeHourTo() {
+        return timeHourTo;
+    }
 }

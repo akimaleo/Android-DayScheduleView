@@ -18,25 +18,25 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends Activity {
+    private DayScheduleView view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DayScheduleView view = (DayScheduleView) findViewById(R.id.dayScheduleView);
+        view = (DayScheduleView) findViewById(R.id.dayScheduleView);
+        addTestEvents();
 
-        ArrayList<DrawableEvent> testE = new ArrayList<DrawableEvent>();
+        //Define variable paint for separator
+        int dashSize = 8;
+        Paint dashPaint = new Paint();
+        dashPaint.setColor(Color.parseColor("#32404e"));
+        dashPaint.setStyle(Paint.Style.STROKE);
+        dashPaint.setStrokeWidth(dashSize);
+        dashPaint.setPathEffect(new DashPathEffect(new float[]{5, dashSize}, 0));
 
-        testE.add(new DrawableEvent(new Time(0, 0), new Time(1, 0)));
-        testE.add(new DrawableEvent(new Time(0, 10), new Time(1, 50)));
-        testE.add(new DrawableEvent(new Time(0, 20), new Time(2, 0)));
-
-        testE.add(new DrawableEvent(new Time(2, 30), new Time(4, 0)));
-        testE.add(new DrawableEvent(new Time(3, 30), new Time(7, 0)));
-        testE.add(new DrawableEvent(new Time(7, 10), new Time(8, 0)));
-
-        view.setEvents(testE);
+        view.setPaintSeparator(dashPaint);
 
 
         //Define variable paint for separator
@@ -55,5 +55,19 @@ public class MainActivity extends Activity {
         //Apply changes for view
         view.setPaintSeparator(dashPaint);
         view.setPaintRectangle(paintRectangle);*/
+    }
+
+    void addTestEvents() {
+        ArrayList<DrawableEvent> testE = new ArrayList<DrawableEvent>();
+
+
+        testE.add(new DrawableEvent(new Time(0, 0), new Time(1, 0)));
+        testE.add(new DrawableEvent(new Time(0, 1), new Time(1, 50)));
+        testE.add(new DrawableEvent(new Time(0, 20), new Time(2, 0)));
+
+        testE.add(new DrawableEvent(new Time(2, 30), new Time(4, 0)));
+        testE.add(new DrawableEvent(new Time(3, 30), new Time(7, 0)));
+        testE.add(new DrawableEvent(new Time(7, 10), new Time(8, 0)));
+        view.setEvents(testE);
     }
 }

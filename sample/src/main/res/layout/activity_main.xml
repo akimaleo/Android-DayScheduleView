@@ -1,15 +1,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-        <com.letit0or1.dayscheduleview.DayScheduleView
-            android:id="@+id/dayScheduleView"
-            android:layout_width="match_parent"
-            app:separatorColor="#22d3ffc7"
-            android:background="#22bebebe"
-            app:eventTextColor="#000000"
-            app:eventBackgroundColor="#7966ff00"
-            android:layout_height="match_parent"/>
+    <com.letit0or1.dayscheduleview.DayScheduleView
+        android:id="@+id/dayScheduleView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#1e303f"
+        app:evenMarginLeft="10dp"
+        app:eventBackgroundColor="#3c009395"
+        app:eventTextColor="#dedede"
+        app:eventTextSize="15sp"
+        app:separatorHeight="2dp"
+        app:timeHourFrom="9"
+        app:timeHourTo="18"
+        app:timeTextColor="#dedede" />
 
 </RelativeLayout>
