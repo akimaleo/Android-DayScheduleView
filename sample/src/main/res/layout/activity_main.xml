@@ -13,8 +13,7 @@
         app:eventTextColor="#dedede"
         app:eventTextSize="15sp"
         app:separatorHeight="2dp"
-        app:timeHourFrom="9"
-        app:timeHourTo="18"
+        app:timeLine="true"
         app:timeTextColor="#dedede" />
 
 </RelativeLayout>

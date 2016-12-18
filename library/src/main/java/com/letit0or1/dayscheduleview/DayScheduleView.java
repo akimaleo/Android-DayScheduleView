@@ -5,6 +5,8 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -14,13 +16,13 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
-import com.letit0or1.dayscheduleview.events.DrawableEvent;
-import com.letit0or1.dayscheduleview.events.Event;
-import com.letit0or1.dayscheduleview.events.EventUtil;
-import com.letit0or1.dayscheduleview.events.EventsController;
+import com.letit0or1.dayscheduleview.entity.DrawableEvent;
+import com.letit0or1.dayscheduleview.entity.EventUtil;
+import com.letit0or1.dayscheduleview.entity.EventsController;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class DayScheduleView extends View {
     private ScaleGestureDetector.OnScaleGestureListener mScaleListener = new ScaleGestureDetector.OnScaleGestureListener() {
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
-            zoom(scaleGestureDetector.getScaleFactor());
+            zoom(scaleGestureDetector);
             return true;
         }
 
@@ -96,7 +98,7 @@ public class DayScheduleView extends View {
             Log.e("Gesture detector", "Long press detected");
         }
     };
-
+    private boolean drawTimeLine;
 
     //Constructors
     public DayScheduleView(Context context) {
@@ -137,6 +139,8 @@ public class DayScheduleView extends View {
 
         //ATTRIBUTES
         TypedArray attributes = getContext().obtainStyledAttributes(attrs, R.styleable.DayScheduleView);
+
+        drawTimeLine = attributes.getBoolean(R.styleable.DayScheduleView_timeHourFrom, false);
 
         //TIME HOUR FROM TO
         timeHourFrom = attributes.getInt(R.styleable.DayScheduleView_timeHourFrom, 0);
@@ -198,6 +202,17 @@ public class DayScheduleView extends View {
         super.onDraw(canvas);
         drawSepAndHours(canvas);
         drawEvents(canvas);
+        drawTimeLine(canvas);
+    }
+
+    private void drawTimeLine(Canvas c) {
+
+        Calendar cdr = Calendar.getInstance();
+        Time curTime = new Time(cdr.get(Calendar.HOUR_OF_DAY), cdr.get(Calendar.MINUTE));
+        float y = getPxByTime(curTime);
+        Paint timeLine = new Paint();
+        timeLine.setColor(Color.RED);
+        c.drawLine(0, y - separatorHeight / 2, c.getWidth(), y + separatorHeight / 2, timeLine);
     }
 
     private void drawSepAndHours(Canvas canvas) {
@@ -283,9 +298,25 @@ public class DayScheduleView extends View {
         return (timeHourTo - timeHourFrom) * (separatorHeight + hourSpacingHeight);
     }
 
-    public void zoom(float scale) {
-        setScroll(scroll * scale);
+
+    public void zoom(ScaleGestureDetector scaleGestureDetector) {
+        float scale = scaleGestureDetector.getScaleFactor();
+        if(scale>1 && getStep()>=maxHourHeight)
+return;
+            float hScalePx = (scale * hourSpacingHeight) - hourSpacingHeight;
+        Log.i("hourIncremet", hScalePx + "");
+
+        float yFocus = scaleGestureDetector.getFocusY();
+        Time focusTime = getTimeByPx((int) yFocus);
+        Log.i("y focus", yFocus + "");
+
+        Time difTime = new Time(focusTime.getTime() - new Time(timeHourFrom, 0).getTime());
+        scroll -= difTime.getHour() * hScalePx;
         setHourSpacingHeight(scale * hourSpacingHeight);
+
+        //VALIDATE
+        if(scroll>0)
+            scroll=0;
         if (getDrawViewHeight() <= getHeight()) {
             scroll = 0;
             setHourSpacingHeight(getHeight() / (timeHourTo - timeHourFrom) - separatorHeight);
@@ -351,14 +382,15 @@ public class DayScheduleView extends View {
     private float getPxByTime(Time time) {
         float minutesInPx = (getStep() / 60) * time.getMinute();
         float hoursInPx = getStep() * (time.getHour() - timeHourFrom);
-
         return hoursInPx + minutesInPx + scroll;
     }
 
     //takes a pixels and returns height in
-    private float getTimeByPx(int px) {
-        float pxMin = getStep() / 60;
-        return px / pxMin;
+    private Time getTimeByPx(int px) {
+        float pxInMin = getStep() / 60;
+        float minInPx = 60 / getStep();
+        Time a = new Time((long) ((minInPx * (px + Math.abs(scroll))) * 60 * 1000));
+        return a;
     }
 
 

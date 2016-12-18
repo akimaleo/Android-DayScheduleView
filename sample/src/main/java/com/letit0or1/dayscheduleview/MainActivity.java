@@ -1,18 +1,12 @@
 package com.letit0or1.dayscheduleview;
 
 import android.app.Activity;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 
-import com.letit0or1.dayscheduleview.R;
-import com.letit0or1.dayscheduleview.events.DrawableEvent;
+import com.letit0or1.dayscheduleview.entity.DrawableEvent;
 
 import java.util.ArrayList;
 

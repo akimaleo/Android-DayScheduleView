@@ -1,12 +1,9 @@
-package com.letit0or1.dayscheduleview.events;
+package com.letit0or1.dayscheduleview.entity;
 
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.letit0or1.dayscheduleview.Time;
-
-import java.util.Comparator;
 
 /**
  * Created by akimaleo on 07.09.16.

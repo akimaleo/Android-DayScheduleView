@@ -6,22 +6,18 @@
         <attr name="separatorHeight" format="dimension" />
         <attr name="separatorPaddingLeft" format="dimension" />
         <attr name="separatorPaddingRight" format="dimension" />
-
         <attr name="timeTextColor" format="color" />
         <attr name="timeTextSize" format="dimension" />
-
         <attr name="timeHourFrom" format="integer" />
         <attr name="timeHourTo" format="integer" />
-
+        <attr name="timeLine" format="boolean" />
         <attr name="hourFieldsHeight" format="dimension" />
         <attr name="hourFieldsMinHeight" format="dimension" />
         <attr name="hourFieldsMaxHeight" format="dimension" />
         <attr name="hourMarginLeft" format="dimension" />
-
         <attr name="eventTextColor" format="color" />
         <attr name="eventTextSize" format="dimension" />
         <attr name="eventBackgroundColor" format="color" />
-
         <attr name="evenMarginLeft" format="dimension" />
         <attr name="evenMarginRight" format="dimension" />
 

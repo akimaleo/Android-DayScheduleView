@@ -1,4 +1,4 @@
-package com.letit0or1.dayscheduleview.events;
+package com.letit0or1.dayscheduleview.entity;
 
 
 import com.letit0or1.dayscheduleview.Time;

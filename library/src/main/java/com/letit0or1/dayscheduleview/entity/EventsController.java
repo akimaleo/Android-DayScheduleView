@@ -1,8 +1,5 @@
-package com.letit0or1.dayscheduleview.events;
+package com.letit0or1.dayscheduleview.entity;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
