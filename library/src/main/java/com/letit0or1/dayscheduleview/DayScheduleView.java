@@ -43,7 +43,30 @@ public class DayScheduleView extends View {
     private ScaleGestureDetector.OnScaleGestureListener mScaleListener = new ScaleGestureDetector.OnScaleGestureListener() {
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
-            zoom(scaleGestureDetector);
+            float scale = scaleGestureDetector.getScaleFactor();
+
+            if (scale > 1 && getStep() >= maxHourHeight)
+                return false;
+
+            float hScalePx = (scale * hourSpacingHeight) - hourSpacingHeight;
+
+            float yFocus = scaleGestureDetector.getFocusY();
+            Time focusTime = getTimeByPx((int) yFocus);
+
+            Time difTime = new Time(focusTime.getTime() - new Time(timeHourFrom, 0).getTime());
+            scroll -= difTime.getHour() * hScalePx;
+            setHourSpacingHeight(scale * hourSpacingHeight);
+
+            //VALIDATE
+            if (scroll > 0)
+                scroll = 0;
+            if (getDrawViewHeight() <= getHeight()) {
+                scroll = 0;
+                setHourSpacingHeight(getHeight() / (timeHourTo - timeHourFrom) - separatorHeight);
+            } else if (getDrawViewEnd() < getHeight()) {
+                scroll -= getDrawViewEnd() - getHeight();
+            }
+            invalidate();
             return true;
         }
 
@@ -296,34 +319,6 @@ public class DayScheduleView extends View {
 
     public float getDrawViewHeight() {
         return (timeHourTo - timeHourFrom) * (separatorHeight + hourSpacingHeight);
-    }
-
-
-    public void zoom(ScaleGestureDetector scaleGestureDetector) {
-        float scale = scaleGestureDetector.getScaleFactor();
-        if(scale>1 && getStep()>=maxHourHeight)
-return;
-            float hScalePx = (scale * hourSpacingHeight) - hourSpacingHeight;
-        Log.i("hourIncremet", hScalePx + "");
-
-        float yFocus = scaleGestureDetector.getFocusY();
-        Time focusTime = getTimeByPx((int) yFocus);
-        Log.i("y focus", yFocus + "");
-
-        Time difTime = new Time(focusTime.getTime() - new Time(timeHourFrom, 0).getTime());
-        scroll -= difTime.getHour() * hScalePx;
-        setHourSpacingHeight(scale * hourSpacingHeight);
-
-        //VALIDATE
-        if(scroll>0)
-            scroll=0;
-        if (getDrawViewHeight() <= getHeight()) {
-            scroll = 0;
-            setHourSpacingHeight(getHeight() / (timeHourTo - timeHourFrom) - separatorHeight);
-        } else if (getDrawViewEnd() < getHeight()) {
-            scroll -= getDrawViewEnd() - getHeight();
-        }
-        invalidate();
     }
 
     private float rectTimeTextWidth() {
