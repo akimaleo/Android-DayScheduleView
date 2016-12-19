@@ -12,12 +12,14 @@ public class DrawableEvent implements Comparable<DrawableEvent> {
 
     private Event event;
     private boolean isReady;
+    private boolean isEditible;
     private int overlapCount = 1;
     private int overlapIndex = 1;
     private Float rectWidth;
     private RectF rect;
     private Paint textPaint;
     private Paint rectPaint;
+
 
     public DrawableEvent(Event event) {
         this.event = event;
@@ -89,6 +91,14 @@ public class DrawableEvent implements Comparable<DrawableEvent> {
 
     public Paint getTextPaint() {
         return textPaint;
+    }
+
+    public boolean isEditible() {
+        return isEditible;
+    }
+
+    public void setEditible(boolean editible) {
+        isEditible = editible;
     }
 
     @Override
