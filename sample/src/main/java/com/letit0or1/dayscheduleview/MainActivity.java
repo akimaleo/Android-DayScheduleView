@@ -1,6 +1,7 @@
 package com.letit0or1.dayscheduleview;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.letit0or1.dayscheduleview.entity.DrawableEvent;
+import com.letit0or1.dayscheduleview.entity.Event;
 import com.letit0or1.dayscheduleview.handler.OnClickListener;
 
 import java.util.ArrayList;
@@ -35,8 +37,19 @@ public class MainActivity extends Activity {
         view.setPaintSeparator(dashPaint);
         view.setOnClickListener(new OnClickListener() {
 
+            DrawableEvent event;
+            long duration = 2 * 60 * 60 * 1000;
+
             @Override
             public void onSingleTap(int x, int y, Time touchTime, DrawableEvent e) {
+                Event qe = new Event(touchTime, new Time(touchTime.getTime() + duration));
+                if (event == null)
+                    event = view.createEvent(new Event(touchTime, new Time(touchTime.getTime() + duration)), false);
+
+
+                event.setEvent(qe);
+                view.invalidate();
+
 //                if (e != null)
 //                    Log.i("Single tap", "X: " + x + " Y: " + y + " time: " + touchTime + " Ev: " + e.getEvent().getTimeFrom().toString());
 //                else
@@ -45,29 +58,17 @@ public class MainActivity extends Activity {
 
             @Override
             public void onLongTap(int x, int y, Time touchTime, DrawableEvent e) {
-//                if (e != null)
-//                    Log.i("Long tap", "X: " + x + " Y: " + y + " time: " + touchTime + " Ev: " + e.getEvent().getTimeFrom().toString());
-//                else
-//                    Log.i("Long tap", "X: " + x + " Y: " + y + " time: " + touchTime);
+                if (e != null && e == event) {
+                    e.setEditible(true);
+                }
+                if (e != null)
+                    Log.i("Long tap", "X: " + x + " Y: " + y + " time: " + touchTime + " Ev: " + e.getEvent().getTimeFrom().toString());
+                else
+                    Log.i("Long tap", "X: " + x + " Y: " + y + " time: " + touchTime);
             }
         });
 
-        //Define variable paint for separator
-        /*Paint dashPaint = new Paint();
-        dashPaint.setARGB(255, 255, 70, 200);
-        dashPaint.setStyle(Paint.Style.STROKE);
-        dashPaint.setPathEffect(new DashPathEffect(new float[]{5, 10, 15, 20}, 0));
 
-        //Define variable paint for rectangle
-        Paint paintRectangle = new Paint();
-        paintRectangle.setColor(Color.argb(100, 50, 60, 255));
-        //But, in Android Manifest.xml for blur effect, set
-        //android:hardwareAccelerated="false"
-        paintRectangle.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL));
-
-        //Apply changes for view
-        view.setPaintSeparator(dashPaint);
-        view.setPaintRectangle(paintRectangle);*/
     }
 
     void addTestEvents() {

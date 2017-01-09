@@ -50,5 +50,15 @@ public class Event implements Comparable<Event> {
         return duration;
     }
 
+    public void setTimeFrom(Time timeFrom) {
+        this.timeFrom = timeFrom;
+    }
 
+    public void setTimeTo(Time timeTo) {
+        this.timeTo = timeTo;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
 }
