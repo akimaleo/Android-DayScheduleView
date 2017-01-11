@@ -7,7 +7,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -17,12 +19,14 @@ import com.letit0or1.dayscheduleview.entity.DrawableEvent;
 import com.letit0or1.dayscheduleview.entity.Event;
 import com.letit0or1.dayscheduleview.entity.EventUtil;
 import com.letit0or1.dayscheduleview.entity.EventsController;
-import com.letit0or1.dayscheduleview.handler.OnClickListener;
+import com.letit0or1.dayscheduleview.handler.EditEvent;
 
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import static android.view.MotionEvent.INVALID_POINTER_ID;
 
 
 public class DayScheduleView extends View {
@@ -31,9 +35,11 @@ public class DayScheduleView extends View {
 
     private EventsController eventsController;
 
+    //STYLE VARIABLE
     private Paint paintSeparator, paintTimeText, paintRectangle, paintTextRect;
     private float hourSpacingHeight, maxHourHeight, minHourHeight, separatorHeight, scroll, hourMarginLeft, separatorMarginLeft, separatorPaddingRight, eventMarginLeft, eventMarginRight;
     private int timeHourFrom, timeHourTo;
+
 
     //Zoom gesture detector
     private ScaleGestureDetector mGestureScaleDetector;
@@ -77,25 +83,23 @@ public class DayScheduleView extends View {
 
         }
     };
+    private com.letit0or1.dayscheduleview.handler.OnClickListener onClickListener;
 
     //Gesture detector
-    private com.letit0or1.dayscheduleview.handler.OnClickListener onClickListener;
-    public void setOnClickListener(com.letit0or1.dayscheduleview.handler.OnClickListener onClickListener) {
-        this.onClickListener = onClickListener;
-    }
     private GestureDetector mGestureDetector;
+    private EditEvent mEditEvent;
     private final GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
-
             float x = e.getX(), y = e.getY();
-            getDrawableEvent(x, y);
             onClickListener.onSingleTap((int) x, (int) y, getTimeByPx((int) y), getDrawableEvent(x, y));
             return true;
         }
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (!canScroll)
+                return false;
             //MOVE OUR LIST
             if (getDrawViewHeight() > getHeight()) {
                 if (distanceY < 0) {
@@ -123,8 +127,15 @@ public class DayScheduleView extends View {
             int x = (int) e.getX(), y = (int) e.getY();
             onClickListener.onLongTap((int) x, (int) y, getTimeByPx((int) y), getDrawableEvent(x, y));
         }
+
     };
+public void setEditable(DrawableEvent event){
+    if(eventsController.getEvents().contains(event)){
+        event.setEditable(true);
+    }
+}
     private volatile boolean drawTimeLine;
+    public boolean canScroll = true;
 
     //Constructors
     public DayScheduleView(Context context) {
@@ -161,19 +172,17 @@ public class DayScheduleView extends View {
     }
 
     private void init(AttributeSet attrs) {
-
-
         //ATTRIBUTES
         TypedArray attributes = getContext().obtainStyledAttributes(attrs, R.styleable.DayScheduleView);
-
+        mEditEvent = new EditEvent(this);
         onClickListener = new com.letit0or1.dayscheduleview.handler.OnClickListener() {
             @Override
-            public void onSingleTap(int x, int y, Time touchTime, DrawableEvent e) {
+            public void onSingleTap(int x, int y, Time touchTime, ArrayList<DrawableEvent> e) {
 
             }
 
             @Override
-            public void onLongTap(int x, int y, Time touchTime, DrawableEvent e) {
+            public void onLongTap(int x, int y, Time touchTime, ArrayList<DrawableEvent> e) {
 
             }
         };
@@ -249,15 +258,18 @@ public class DayScheduleView extends View {
         attributes.recycle();
     }
 
+    //TOUCH EVENT HANDLER
     @Override
     public boolean dispatchTouchEvent(MotionEvent mEvent) {
 
         mGestureDetector.onTouchEvent(mEvent);
         mGestureScaleDetector.onTouchEvent(mEvent);
+        mEditEvent.dispatchEdit(mEvent);
+
+        invalidate();
 
         return true;
     }
-
 
     //DRAW
     @Override
@@ -340,17 +352,16 @@ public class DayScheduleView extends View {
         }
     }
 
-
     public DrawableEvent createEvent(Event e, boolean isEditable) {
         DrawableEvent event = new DrawableEvent(e);
-        event.setEditible(isEditable);
+        event.setEditable(isEditable);
         eventsController.getEvents().add(event);
         invalidate();
         return event;
     }
 
-    //
-    ArrayList<DrawableEvent> filterEventByTime(ArrayList<DrawableEvent> toFilter) {
+    //ADDITIONAL PART
+    private ArrayList<DrawableEvent> filterEventByTime(ArrayList<DrawableEvent> toFilter) {
 
         ArrayList<DrawableEvent> filter = new ArrayList<>();
 
@@ -433,7 +444,7 @@ public class DayScheduleView extends View {
     }
 
     //takes a pixels and returns height in
-    private Time getTimeByPx(int px) {
+    public Time getTimeByPx(int px) {
         float pxInMin = getStep() / 60;
         float minInPx = 60 / getStep();
         Time a = new Time((long) ((minInPx * (px + Math.abs(scroll))) * 60 * 1000));
@@ -516,7 +527,7 @@ public class DayScheduleView extends View {
         return touchTypeIndex;
     }
 
-    private DrawableEvent getDrawableEvent(float x, float y) {
+    public ArrayList<DrawableEvent> getDrawableEvent(float x, float y) {
         List<DrawableEvent> events = eventsController.getEvents();
 
         //filter for overlapping events by Y
@@ -527,11 +538,12 @@ public class DayScheduleView extends View {
             }
 
         }
-        int touchTypeIndex = touchIndex(x, y);
-
-        if (hoverEvents.size() > 0)
-            return hoverEvents.get(hoverEvents.size() - 1);
-        else return null;
+        return (ArrayList<DrawableEvent>) hoverEvents;
+//        int touchTypeIndex = touchIndex(x, y);
+//
+//        if (hoverEvents.size() > 0)
+//            return hoverEvents.get(hoverEvents.size() - 1);
+//        else return null;
     }
 
     boolean hoverClickByY(DrawableEvent event, float x, float y) {
@@ -544,6 +556,14 @@ public class DayScheduleView extends View {
 
     public void setPaintSeparator(Paint paintSeparator) {
         this.paintSeparator = paintSeparator;
+    }
+
+    public void setOnClickListener(com.letit0or1.dayscheduleview.handler.OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
+
+    public EventsController getEventsController() {
+        return eventsController;
     }
 
     public Paint getPaintSeparator() {
@@ -577,4 +597,12 @@ public class DayScheduleView extends View {
         return timeHourTo;
     }
 
+    private boolean isEditable() {
+        for (DrawableEvent i : getEventsController().getEvents()) {
+            if (i.isEditable()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

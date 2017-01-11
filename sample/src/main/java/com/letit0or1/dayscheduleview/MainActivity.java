@@ -1,12 +1,10 @@
 package com.letit0or1.dayscheduleview;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.letit0or1.dayscheduleview.entity.DrawableEvent;
 import com.letit0or1.dayscheduleview.entity.Event;
@@ -40,34 +38,41 @@ public class MainActivity extends Activity {
             DrawableEvent event;
             long duration = 2 * 60 * 60 * 1000;
 
+            Paint editable;
+            Paint current;
+
             @Override
-            public void onSingleTap(int x, int y, Time touchTime, DrawableEvent e) {
-                Event qe = new Event(touchTime, new Time(touchTime.getTime() + duration));
-                if (event == null)
-                    event = view.createEvent(new Event(touchTime, new Time(touchTime.getTime() + duration)), false);
-
-
-                event.setEvent(qe);
-                view.invalidate();
-
-//                if (e != null)
-//                    Log.i("Single tap", "X: " + x + " Y: " + y + " time: " + touchTime + " Ev: " + e.getEvent().getTimeFrom().toString());
-//                else
-//                    Log.i("Single tap", "X: " + x + " Y: " + y + " time: " + touchTime);
+            public void onSingleTap(int x, int y, Time touchTime, ArrayList<DrawableEvent> e) {
+                init();
+                if (e.size() == 0) {
+                    if (event == null) {
+                        event = view.createEvent(new Event(touchTime, new Time(touchTime.getTime() + duration)), false);
+                    }
+                    event.setEditable(false);
+                    event.setRectPaint(current);
+                }
             }
 
             @Override
-            public void onLongTap(int x, int y, Time touchTime, DrawableEvent e) {
-                if (e != null && e == event) {
-                    e.setEditible(true);
+            public void onLongTap(int x, int y, Time touchTime, ArrayList<DrawableEvent> e) {
+                init();
+                if (e.contains(event)) {
+                    event.setEditable(true);
+                    event.setRectPaint(editable);
                 }
-                if (e != null)
-                    Log.i("Long tap", "X: " + x + " Y: " + y + " time: " + touchTime + " Ev: " + e.getEvent().getTimeFrom().toString());
-                else
-                    Log.i("Long tap", "X: " + x + " Y: " + y + " time: " + touchTime);
+            }
+
+            void init() {
+                if (editable == null) {
+                    editable = new Paint();
+                    current = new Paint();
+
+                    editable.setColor(Color.BLUE);
+                    current.setColor(Color.YELLOW);
+                }
+                view.invalidate();
             }
         });
-
 
     }
 
