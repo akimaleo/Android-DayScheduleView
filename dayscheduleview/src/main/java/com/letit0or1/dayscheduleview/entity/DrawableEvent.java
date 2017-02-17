@@ -13,6 +13,7 @@ public class DrawableEvent implements Comparable<DrawableEvent> {
     private Event event;
     private boolean isReady;
     private boolean isEditable =false;
+    private boolean isResizable = false;
     private int overlapCount = 1;
     private int overlapIndex = 1;
     private Float rectWidth;
@@ -99,6 +100,14 @@ public class DrawableEvent implements Comparable<DrawableEvent> {
 
     public void setEditable(boolean editable) {
         isEditable = editable;
+    }
+
+    public boolean isResizable() {
+        return isResizable;
+    }
+
+    public void setResizable(boolean resizable) {
+        isResizable = resizable;
     }
 
     @Override

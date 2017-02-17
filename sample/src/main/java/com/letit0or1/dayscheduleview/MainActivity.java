@@ -35,11 +35,11 @@ public class MainActivity extends Activity {
         view.setPaintSeparator(dashPaint);
         view.setOnClickListener(new OnClickListener() {
 
-            DrawableEvent event;
-            long duration = 2 * 60 * 60 * 1000;
+            private DrawableEvent event;
+            private long duration = 2 * 60 * 60 * 1000;
 
-            Paint editable;
-            Paint current;
+            private Paint editable;
+            private Paint current;
 
             @Override
             public void onSingleTap(int x, int y, Time touchTime, ArrayList<DrawableEvent> e) {
@@ -58,6 +58,7 @@ public class MainActivity extends Activity {
                 init();
                 if (e.contains(event)) {
                     event.setEditable(true);
+                    event.setResizable(false);
                     event.setRectPaint(editable);
                 }
             }
@@ -68,7 +69,7 @@ public class MainActivity extends Activity {
                     current = new Paint();
 
                     editable.setColor(Color.BLUE);
-                    current.setColor(Color.YELLOW);
+                    current.setColor(Color.WHITE);
                 }
                 view.invalidate();
             }

@@ -129,11 +129,13 @@ public class DayScheduleView extends View {
         }
 
     };
-public void setEditable(DrawableEvent event){
-    if(eventsController.getEvents().contains(event)){
-        event.setEditable(true);
+
+    public void setEditable(DrawableEvent event) {
+        if (eventsController.getEvents().contains(event)) {
+            event.setEditable(true);
+        }
     }
-}
+
     private volatile boolean drawTimeLine;
     public boolean canScroll = true;
 
@@ -348,6 +350,10 @@ public void setEditable(DrawableEvent event){
                         getPxByTime(i.getEvent().getTimeFrom()) + paintTextRect.getTextSize(),
                         i.getTextPaint() == null ? paintTextRect : i.getTextPaint());
 
+                //DRAW RECT RESIZABLE BUTTON
+                if (i.isResizable()) {
+
+                }
             }
         }
     }
