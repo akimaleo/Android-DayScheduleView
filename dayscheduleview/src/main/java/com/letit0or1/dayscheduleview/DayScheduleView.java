@@ -7,9 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -25,8 +23,6 @@ import com.letit0or1.dayscheduleview.handler.EditEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
-import static android.view.MotionEvent.INVALID_POINTER_ID;
 
 
 public class DayScheduleView extends View {
@@ -131,7 +127,7 @@ public class DayScheduleView extends View {
     };
 
     public void setEditable(DrawableEvent event) {
-        if (eventsController.getEvents().contains(event)) {
+        if (eventsController.getmDventsList().contains(event)) {
             event.setEditable(true);
         }
     }
@@ -325,8 +321,8 @@ public class DayScheduleView extends View {
 
     public void drawEvents(Canvas canvas) {
 
-        if (eventsController.getEvents() != null) {
-            ArrayList<DrawableEvent> filtered = filterEventByTime((ArrayList<DrawableEvent>) eventsController.getEvents());
+        if (eventsController.getmDventsList() != null) {
+            ArrayList<DrawableEvent> filtered = filterEventByTime((ArrayList<DrawableEvent>) eventsController.getmDventsList());
             calculateDrawType(filtered);
 
             float
@@ -361,7 +357,7 @@ public class DayScheduleView extends View {
     public DrawableEvent createEvent(Event e, boolean isEditable) {
         DrawableEvent event = new DrawableEvent(e);
         event.setEditable(isEditable);
-        eventsController.getEvents().add(event);
+        eventsController.getmDventsList().add(event);
         invalidate();
         return event;
     }
@@ -508,7 +504,7 @@ public class DayScheduleView extends View {
     }
 
     public void setEvents(List<DrawableEvent> events) {
-        eventsController.setEvents(events);
+        eventsController.setmDventsList(events);
     }
 
     public void setRectangleTextSize(float size) {
@@ -534,7 +530,7 @@ public class DayScheduleView extends View {
     }
 
     public ArrayList<DrawableEvent> getDrawableEvent(float x, float y) {
-        List<DrawableEvent> events = eventsController.getEvents();
+        List<DrawableEvent> events = eventsController.getmDventsList();
 
         //filter for overlapping events by Y
         List<DrawableEvent> hoverEvents = new ArrayList<>();
@@ -604,7 +600,7 @@ public class DayScheduleView extends View {
     }
 
     private boolean isEditable() {
-        for (DrawableEvent i : getEventsController().getEvents()) {
+        for (DrawableEvent i : getEventsController().getmDventsList()) {
             if (i.isEditable()) {
                 return true;
             }

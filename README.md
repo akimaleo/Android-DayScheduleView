@@ -1,7 +1,7 @@
 # Description
-This View destinies for manipulating events during the day;
+This View destinies for manipulating mDventsList during the day;
 ##Features
-Add events.
+Add mDventsList.
 Vertical scroll.
 Zoom in/out.
 Customising view from XML or Java code.(See Customising view)
@@ -18,7 +18,7 @@ Customising view from XML or Java code.(See Customising view)
     android:layout_marginTop="1dp"/>
 ```
 
-## Add events:
+## Add mDventsList:
 ```
 DayScheduleView view = (DayScheduleView) findViewById(R.id.dayScheduleView);
 

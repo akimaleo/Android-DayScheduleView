@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.letit0or1.dayscheduleview.DayScheduleView;
-import com.letit0or1.dayscheduleview.Time;
 import com.letit0or1.dayscheduleview.entity.DrawableEvent;
 import com.letit0or1.dayscheduleview.entity.Event;
 
@@ -79,7 +78,7 @@ public class EditEvent {
         if (editable != null && editable.isEditable() == true) {
             return true;
         }
-        for (DrawableEvent i : dView.getEventsController().getEvents()) {
+        for (DrawableEvent i : dView.getEventsController().getmDventsList()) {
             if (i.isEditable()) {
                 editable = i;
 
