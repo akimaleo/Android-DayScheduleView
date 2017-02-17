@@ -242,7 +242,7 @@ public class DayScheduleView extends View {
         paintRectangle = new Paint();
         paintRectangle.setColor(attributes.getColor(R.styleable.DayScheduleView_eventBackgroundColor, Color.argb(200, 150, 150, 150)));
         paintRectangle.setStyle(Paint.Style.FILL);
-        eventMarginLeft = attributes.getDimension(R.styleable.DayScheduleView_evenMarginLeft, 150);
+        eventMarginLeft = attributes.getDimension(R.styleable.DayScheduleView_evenMarginLeft, 100);
         eventMarginRight = attributes.getDimension(R.styleable.DayScheduleView_evenMarginRight, 10);
         //paintRectangle.setShadowLayer(10.0f, 0.0f, 2.0f, Color.LTGRAY);
         //paintRectangle.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.SOLID));
